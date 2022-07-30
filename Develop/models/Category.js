@@ -7,9 +7,10 @@ const sequelize = require('../config/connection.js');
 class Category extends Model {}
 
 Category.init(
+      //We will first define the columns for the model
   {
     id: {
-      type: DataTypes.INT, 
+      type: DataTypes.INTEGER, 
       allowNull: false,
       primaryKey: true,
       autoIncrement: true,
@@ -18,7 +19,6 @@ Category.init(
       type: DataTypes.STRING,
       allowNull: false
     }
-    // define columns
   },
   {
     sequelize,
@@ -29,4 +29,6 @@ Category.init(
   }
 );
 
+
+//always export at end script
 module.exports = Category;
