@@ -1,3 +1,6 @@
+//TODO: Work on routes first
+//TODO: Will test everything through insomnia 
+
 const router = require('express').Router();
 const { Tag, Product, ProductTag } = require('../../models');
 

@@ -1,3 +1,5 @@
+//TODO: Work on routes first
+
 const router = require('express').Router();
 const { Product, Category, Tag, ProductTag } = require('../../models');
 

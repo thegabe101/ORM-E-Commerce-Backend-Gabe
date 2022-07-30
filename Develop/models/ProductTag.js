@@ -1,3 +1,5 @@
+//TODO: Need to write out the models 
+
 const { Model, DataTypes } = require('sequelize');
 
 const sequelize = require('../config/connection');
