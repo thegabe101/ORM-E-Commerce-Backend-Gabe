@@ -16,30 +16,31 @@ const { Category, Product } = require('../../models');
 //I believe this could be written as an async; will write two ways and determine later.
 
 //first method
-router.get('/', (req, res) => {
-  // find all categories
-  // be sure to include its associated Products
-  Category.findAll({
-    include: {
-      model: Product, 
-      attributes: ['id', 'product_name', 'price', 'stock', 'category_id']
-    }
-  }).then(categoryRes => {
-    //if there is no match, send userend 404 and return out of function terminate
-    if(!categoryRes) {
-      res.status(404).json({message: 'There is no matching category for your request.'});
-      return;
-    }
-    //if response is successful, reply with json data
-    res.json(categoryRes);
-  })
-  //general error for connectivity issue, usually
-  .catch(err => {
-    console.log(err);
-    res.status(500).json(err);
-  })
-});
+// router.get('/', (req, res) => {
+//   // find all categories
+//   // be sure to include its associated Products
+//   Category.findAll({
+//     include: {
+//       model: Product, 
+//       attributes: ['id', 'product_name', 'price', 'stock', 'category_id']
+//     }
+//   }).then(categoryRes => {
+//     //if there is no match, send userend 404 and return out of function terminate
+//     if(!categoryRes) {
+//       res.status(404).json({message: 'There is no matching category for your request.'});
+//       return;
+//     }
+//     //if response is successful, reply with json data
+//     res.json(categoryRes);
+//   })
+//   //general error for connectivity issue, usually
+//   .catch(err => {
+//     console.log(err);
+//     res.status(500).json(err);
+//   })
+// });
 
+//Going to try to use second method- async- and see if that works first. Will be cleaner with less wrapping syntax.
 //second method
 
 router.get("/",async (req,res)=>{
@@ -85,16 +86,76 @@ router.get('/:id', async (req, res) => {
 //   // be sure to include its associated Products
 // });
 
-router.post('/', (req, res) => {
+
+//Post will be more complex. Will need to use create method and use req.body + supply the object keys and properties.
+router.post('/', async (req, res) => {
   // create a new category
+  try {
+    const newCategory = await Category.create ({
+      //body object key pairs to post
+      id: req.body.id,
+      category_name: req.body.category_name
+    });
+    //respond with newly created category and 200
+    res.status(200).json(newCategory);
+  } catch (err) {
+    console.log(err)
+    //respond with error message + 500
+    res.status(500).json({
+      msg: "We're sorry- the server has encountered an error.",
+      err
+    });
+  };
 });
+
+
+//not sure how to create put route. Struggling with this one. Will return to it later because I know how to make the delete. 
+// router.put('/:id', (req, res) => {
+//   // update a category by its `id` value
+//   try {
+//     const newCatId = await Category.update (req.body, {
+//         where: {
+//           id: req.params.id,
+//         },
+//     }).then(newCat => Category.findByPk(req.params.id))
+//     .then((updateCat) => res.status(200).json(updateCat))
+//   } catch(err) {
+//     res.json(err);}
+// });
+
+//On second thought it doesn't make much sense to force put to be async. Will try reverting.
 
 router.put('/:id', (req, res) => {
-  // update a category by its `id` value
+  Category.findByPk(req.params.id).then(catUpdate => {
+    if(!catUpdate){
+      return res.status(404).json({msg:"No category with that id exists in the database."})
+    }
+    res.json(catUpdate)
+  }).catch(err=>{
+    res.status(500).json({
+      msg: "We're sorry, there has been an internal server error.",
+      err
+    });
+  });
 });
 
-router.delete('/:id', (req, res) => {
-  // delete a category by its `id` value
+
+//delete route can simple find a category by its id value and remove it. 
+//will use .destroy method where the req.params.id is synced with user req
+router.delete('/:id', async (req, res) => {
+  await Category.destroy({
+		where: {
+			id: req.params.id,
+		},
+	})
+	.then((rmvdCategory) => {
+		res.json(`The category was removed from the database`);
+	})
+	.catch((err) => {
+		res.json(err);
+	});
 });
 
+
+//TODO: With these routes created, can do some testing out and then mimic them in other route files if they are successfully drawn
 module.exports = router;

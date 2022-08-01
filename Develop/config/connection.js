@@ -1,5 +1,7 @@
 require('dotenv').config();
 
+//having trouble with an unknown plugin when trying to run server. wondering if I need to add a port here. 
+
 const Sequelize = require('sequelize');
 
 const sequelize = process.env.JAWSDB_URL
@@ -10,6 +12,7 @@ const sequelize = process.env.JAWSDB_URL
       dialectOptions: {
         decimalNumbers: true,
       },
+      port: 3306
     });
 
 module.exports = sequelize;

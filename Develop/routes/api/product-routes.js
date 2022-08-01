@@ -7,6 +7,15 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 
 // get all products
 router.get('/', (req, res) => {
+  router.get('/', async (req, res) => {
+    try { 
+      //here we use the sequelize findAll method in order to querie the whole table from both the category and tag models, then we respond with that data as productInfo
+     const productInfo = await Product.findAll({ include: ({ model: Category }, {model: Tag}) });
+     res.status(200).json(productInfo);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  }); 
   // find all products
   // be sure to include its associated Category and Tag data
 });
@@ -15,10 +24,28 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
   // find a single product by its `id`
   // be sure to include its associated Category and Tag data
+  router.get('/:id', async (req, res) => {
+    try { 
+      //this query is somewhat different from the get all above; here we use findbypk to obtain only a single entry from the table using whatever the provided primary key is.
+      //this is where the primary key becomes crucial 
+      const productInfo = await Product.findByPk(req.params.id, { include: ({ model: Category }, {model: Tag }) });
+      if (!productInfo) {
+        //if no existing matching product
+      res.status(404).json({ message: "Sorry! We could not find a matching product in our database."})
+      return;
+      }
+      //return package if product info id exists
+      res.status(200).json(productInfo);
+     } catch (err) {
+      //connection error 
+       res.status(500).json(err);
+     }
+  });
 });
 
 // create new product
-router.post('/', (req, res) => {
+//the idea here will be to create a new product using create, then bulkcreate if the array us there
+router.post('/', async (req, res) => {
   /* req.body should look like this...
     {
       product_name: "Basketball",
@@ -91,8 +118,28 @@ router.put('/:id', (req, res) => {
     });
 });
 
-router.delete('/:id', (req, res) => {
-  // delete one product by its `id` value
+//here we can use the destroy method where the params id matches the query. we will continue to use async and try 
+//remember that async always returns a promise. when no return statement is defined, it would return a resolving promise.
+//here though, we can return a 404 error if the promise is unfulfilled, or a rejection error
+router.delete('/:id', async (req, res) => {
+  try {
+    const productInfo = await Product.destroy({
+      //destroy using id specificity
+      where: {
+        id: req.params.id
+      }
+    })
+    //no match
+    if (!productInfo) {
+      res.status(404).json({ message: "We're sorry- no product matching that id exists in our database."});
+      return;
+    }
+    //successful response
+  res.status(200).json(productInfo);
+  } catch (err) {
+  //catch error 
+  res.status(500).json(err)
+  }
 });
 
 module.exports = router;
