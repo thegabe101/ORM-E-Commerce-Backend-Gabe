@@ -6,7 +6,6 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 // The `/api/products` endpoint
 
 // get all products
-router.get('/', (req, res) => {
   router.get('/', async (req, res) => {
     try { 
       //here we use the sequelize findAll method in order to querie the whole table from both the category and tag models, then we respond with that data as productInfo
@@ -18,10 +17,10 @@ router.get('/', (req, res) => {
   }); 
   // find all products
   // be sure to include its associated Category and Tag data
-});
+
 
 // get one product
-router.get('/:id', (req, res) => {
+
   // find a single product by its `id`
   // be sure to include its associated Category and Tag data
   router.get('/:id', async (req, res) => {
@@ -41,7 +40,7 @@ router.get('/:id', (req, res) => {
        res.status(500).json(err);
      }
   });
-});
+
 
 // create new product
 //the idea here will be to create a new product using create, then bulkcreate if the array us there

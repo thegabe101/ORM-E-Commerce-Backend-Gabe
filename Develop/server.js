@@ -25,6 +25,10 @@ app.use(routes);
 
 //It turns out I got a SHA256 error when trying to sequelize/sync my listen method.
 //I'm not entirely sure I understand why, so this is something I need to ask someone about ASAP. Port is listening with this function, though. 
-app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}!`);
+// app.listen(PORT, () => {
+//   console.log(`App listening on port ${PORT}!`);
+// });
+
+sequelize.sync({ force: false }).then(() => {
+  app.listen(PORT, () => console.log(`App listening on port ${PORT}!`));
 });
