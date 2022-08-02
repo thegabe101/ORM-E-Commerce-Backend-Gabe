@@ -42,7 +42,7 @@ const { Category, Product } = require('../../models');
 
 //Going to try to use second method- async- and see if that works first. Will be cleaner with less wrapping syntax.
 //second method
-
+//we will include our product model + its attributes in order to display the whole of the item we want to find (for which we will use class selector findAll)
 router.get("/",async (req,res)=>{
   try {
       const categories = await Category.findAll( {
@@ -67,7 +67,7 @@ router.get("/",async (req,res)=>{
 router.get('/:id', async (req, res) => {
   try {
     //findByPk to examine request params.id
-    //include must include an array for grabbing the full index of inteer value ids
+    //include must include an array for grabbing the full index of inter value ids
     const categoryId = await Category.findByPk(req.params.id, {
       include: [{
         model: Product,
@@ -103,6 +103,16 @@ router.post('/', async (req, res) => {
       category_name: req.body.category_name,
       attributes: ['id', 'product_name', 'price', 'stock', 'category_id'],
     });
+  // try {
+  //   //findByPk to examine request params.id
+  //   //include must include an array for grabbing the full index of inter value ids
+  //   const newCategory = await Category.create(req.body.id, req.body.category_name, {
+  //     include: [{
+  //       model: Product,
+  //       attributes: ['id', 'product_name', 'price', 'stock', 'category_id'],
+  //     }],
+  //   });
+    //getting key.includes is not a function error here. for now will need to just do re.body and cat name.
     //respond with newly created category and 200
     res.status(200).json(newCategory);
   } catch (err) {
@@ -115,6 +125,12 @@ router.post('/', async (req, res) => {
   };
 });
 
+
+//TODO: Current post result is successful but only half so. We are posting properly but not including attributes. We could simply post category name or try to fix if we have time. Not sure why attributes aren't posting.
+//Was going to ask tutor tonight but he is sick. May not have time to fix. Will come back around if possible. 
+//A bit confused still as to whether we should be updating product data here.
+//!! either I am not updating product data correctly (I have tried) or I am misssing a relationship in the associations that would cause it to update correctly
+//OR i am failing to write my attribute array correctly in my includes params within these functions. 
 
 //not sure how to create put route. Struggling with this one. Will return to it later because I know how to make the delete. 
 // router.put('/:id', (req, res) => {
@@ -133,19 +149,26 @@ router.post('/', async (req, res) => {
 //On second thought it doesn't make much sense to force put to be async. Will try reverting.
 
 router.put('/:id', (req, res) => {
-  Category.findByPk(req.params.id).then(catUpdate => {
-    if(!catUpdate){
-      return res.status(404).json({msg:"No category with that id exists in the database."})
+  //was originalyly using findByPk here but I think I need to use Category.update and replace params with where/id like I do in the destroy methodology
+  Category.update(req.body, {
+    where: {
+      id: req.params.id
     }
-    res.json(catUpdate)
-  }).catch(err=>{
-    res.status(500).json({
-      msg: "We're sorry, there has been an internal server error.",
-      err
+    })
+    //promise if parameters don't exist return status OR respond with updated category body
+      .then(catUpdateBody => {
+        if(!catUpdateBody) {
+          res.status(404).json({ message: "We're sorry- no category with this id exists in our database."});
+        }
+        res.json(catUpdateBody);
+      }).catch(err => {
+        //classic error catch
+        console.log(err);
+        res.status(500).json(err);
+      });
     });
-  });
-});
-
+    //same issue- how to update our attributes? will try again in insomnia but didn't work with post. 
+    //Seems like we can only update our category names one at a time. I guess that makes sense- we are not updating the products here. 
 
 //delete route can simple find a category by its id value and remove it. 
 //will use .destroy method where the req.params.id is synced with user req
