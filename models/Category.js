@@ -6,6 +6,7 @@ const sequelize = require('../config/connection.js');
 
 class Category extends Model {}
 
+//all ids will autoincrement
 Category.init(
       //We will first define the columns for the model
   {

@@ -9,8 +9,8 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
   router.get('/', async (req, res) => {
     try { 
       //here we use the sequelize findAll method in order to querie the whole table from both the category and tag models, then we respond with that data as productInfo
-     const productInfo = await Product.findAll({ include: ({ model: Category }, {model: Tag}) });
-     res.status(200).json(productInfo);
+          const productInfo = await Product.findAll({ include: ({ model: Category }, {model: Tag}) });
+          res.status(200).json(productInfo);
     } catch (err) {
       res.status(500).json(err);
     }
@@ -27,18 +27,18 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
     try { 
       //this query is somewhat different from the get all above; here we use findbypk to obtain only a single entry from the table using whatever the provided primary key is.
       //this is where the primary key becomes crucial 
-      const productInfo = await Product.findByPk(req.params.id, { include: ({ model: Category }, {model: Tag }) });
-      if (!productInfo) {
+            const productInfo = await Product.findByPk(req.params.id, { include: ({ model: Category }, {model: Tag }) });
+            if (!productInfo) {
         //if no existing matching product
-      res.status(404).json({ message: "Sorry! We could not find a matching product in our database."})
-      return;
+            res.status(404).json({ message: "Sorry! We could not find a matching product in our database."})
+            return;
       }
       //return package if product info id exists
-      res.status(200).json(productInfo);
-     } catch (err) {
+        res.status(200).json(productInfo);
+    } catch (err) {
       //connection error 
-       res.status(500).json(err);
-     }
+        res.status(500).json(err);
+    }
   });
 
 

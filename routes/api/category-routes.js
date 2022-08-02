@@ -47,7 +47,8 @@ router.get("/",async (req,res)=>{
   try {
       const categories = await Category.findAll( {
         include: [{
-          model: Product
+          model: Product,
+          attributes: ['id', 'product_name', 'price', 'stock', 'category_id'],
         }],
       }); 
       res.status(200).json(categories);
@@ -153,12 +154,18 @@ router.delete('/:id', async (req, res) => {
 		},
 	})
 	.then((rmvCat) => {
-		res.json(`The category was removed from the database`);
-	})
-	.catch((err) => {
-		res.json(err);
-	});
+    if (!rmvCat) {
+		res.status(404).json({msg: `The category was removed from the database`})
+    return;
+	}
+  res.json(rmvCat)
+})
+  .catch((err) => {
+    console.log(err)
+    res.status(500).json(err)
+  });
 });
+
 
 
 //TODO: With these routes created, can do some testing out and then mimic them in other route files if they are successfully drawn
