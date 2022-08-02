@@ -34,11 +34,10 @@ This project was a pure back-end endeavor aimed toward creating a a mock databas
 
 ## Screenshots
 
-- ![Alt= .](./screenshots/screenshot1.jpg)
-- ![Alt= .](./screenshots/screenshot2.jpg)
-- ![Alt= .](./screenshots/screenshot3.jpg)
-- ![Alt= .](./screenshots/screenshot4.jpg)
-- ![Alt= .](./screenshots/screenshot5.jpg)
+- ![Alt= Screenshot showing Insomnia with a fetched product route.](./screenshots/screenshot1.jpg)
+- ![Alt= Screenshot showing basic server setup.](./screenshots/screenshot2.jpg)
+- ![Alt= Screenshot showing seed file and npm run seed command to seed the database.](./screenshots/screenshot3.jpg)
+- ![Alt= Screenshot showing node server.js command and a prouct route.](./screenshots/screenshot4.jpg)
 
 ## Credits
 

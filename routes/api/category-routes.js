@@ -70,7 +70,8 @@ router.get('/:id', async (req, res) => {
     //include must include an array for grabbing the full index of inteer value ids
     const categoryId = await Category.findByPk(req.params.id, {
       include: [{
-        model: Product
+        model: Product,
+        attributes: ['id', 'product_name', 'price', 'stock', 'category_id'],
       }],
     });
 
@@ -99,7 +100,8 @@ router.post('/', async (req, res) => {
     const newCategory = await Category.create ({
       //body object key pairs to post
       id: req.body.id,
-      category_name: req.body.category_name
+      category_name: req.body.category_name,
+      attributes: ['id', 'product_name', 'price', 'stock', 'category_id'],
     });
     //respond with newly created category and 200
     res.status(200).json(newCategory);
