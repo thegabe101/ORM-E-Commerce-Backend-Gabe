@@ -11,18 +11,24 @@ router.get('/', async (req, res) => {
   // find all tags
   try {
     //find all products with a tag. no need for 404 because we are not searching for particular ids yet. 
-    const findTag = await Tag.findAll({ include: [
-      {
-      model: Product,
-      attributes: ['id', 'product_name', 'price', 'stock', 'category_id'], 
-    }]
-  },
-    res.status(200).json(findTag))
+    const findTag = await Tag.findAll({ 
+      //maybe including attributes is not the right call. perhaps it would be more straightforward to only include model. 
+    //   attributes: id', 'tag_name',
+    //   include: 
+    //     
+    //   model: Product,
+    //think we are including too many tag attributes here. should only need id and tag name so changed it to that. product should still require all attributes. 
+    //       attributes: 'id', 'product_name', 'price', 'stock', 'category_id', 
+          include: [
+            {model: Product}
+        ],
+      });
+    res.status(200).json(findTag);
   } catch (err) {
     res.status(500).json(err);
   }
-  // be sure to include its associated Product data
 });
+  // be sure to include its associated Product data;
 
 //this can be performed in an identical manner to our get by id in product and category routes
 router.get('/:id', async (req, res) => {
