@@ -1,6 +1,6 @@
 # ORM-E-Commerce-Backend-Gabe
 
-## Video Walkthrough Link
+## Video Walkthrough Link: https://drive.google.com/file/d/18Ab8n0BD8mCCT60dtDTq7BYuT6ZFqdsJ/view
 
 ## Table of Contents
 
