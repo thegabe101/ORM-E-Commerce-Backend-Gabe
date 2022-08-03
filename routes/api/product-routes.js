@@ -1,5 +1,7 @@
 //TODO: Work on routes first
 
+//TODO: finalize product routes. Just checked insomnia and right now GET and DELETE routes are functioning, post and put are issues. 
+
 const router = require('express').Router();
 const { Product, Category, Tag, ProductTag } = require('../../models');
 
@@ -10,6 +12,7 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
     try { 
       //here we use the sequelize findAll method in order to querie the whole table from both the category and tag models, then we respond with that data as productInfo
           const productInfo = await Product.findAll({ include: ({ model: Category }, {model: Tag}) });
+          //by including our category and tag models we can associate their data with a given product
           res.status(200).json(productInfo);
     } catch (err) {
       res.status(500).json(err);
@@ -44,7 +47,48 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 
 // create new product
 //the idea here will be to create a new product using create, then bulkcreate if the array us there
-router.post('/', async (req, res) => {
+// router.post('/', (req, res) => {
+//   /* req.body should look like this...
+//     {
+//       product_name: "Basketball",
+//       price: 200.00,
+//       stock: 3,
+//       tagIds: [1, 2, 3, 4]
+//     }
+//   */
+//  //added req.body specifics because create was crashing
+//   Product.create ({
+//     // product_name: req.body.product_name,
+//     // price: req.body.price,
+//     // stock: req.body.stock,
+//     // category_id: req.body.category_id,
+//     // tagIds: req.body.tagIds
+//   })
+//     .then((product) => {
+//       // if there's product tags, we need to create pairings to bulk create in the ProductTag model
+//       if (req.body.tagIds.length) {
+//         const productTagIdArr = req.body.tagIds.map((tag_id) => {
+//           return {
+//             product_id: product.id,
+//             tag_id,
+//           };
+//         });
+//         return ProductTag.bulkCreate(productTagIdArr);
+//       }
+//       // if no product tags, just respond
+//       res.status(200).json(product);
+//     })
+//     .then((productTagIds) => res.status(200).json(productTagIds))
+//     .catch((err) => {
+//       console.log(err);
+//       res.status(400).json(err);
+//     });
+// });
+
+//!! not totally sure what I have done wrong here with mucking up the post, so I'm going to try reverting to the original product post code and see if it works. 
+
+// create new product
+router.post('/', (req, res) => {
   /* req.body should look like this...
     {
       product_name: "Basketball",
@@ -53,34 +97,28 @@ router.post('/', async (req, res) => {
       tagIds: [1, 2, 3, 4]
     }
   */
- //added req.body specifics because create was crashing
-  Product.create ({
-    product_name: req.body.product_name,
-    price: req.body.price,
-    stock: req.body.stock,
-    category_id: req.body.category_id,
-    tagIds: req.body.tagIds
-  })
-    .then((product) => {
-      // if there's product tags, we need to create pairings to bulk create in the ProductTag model
-      if (req.body.tagIds.length) {
-        const productTagIdArr = req.body.tagIds.map((tag_id) => {
-          return {
-            product_id: product.id,
-            tag_id,
-          };
-        });
-        return ProductTag.bulkCreate(productTagIdArr);
-      }
-      // if no product tags, just respond
-      res.status(200).json(product);
-    })
-    .then((productTagIds) => res.status(200).json(productTagIds))
-    .catch((err) => {
-      console.log(err);
-      res.status(400).json(err);
-    });
+  Product.create(req.body)
+      .then((product) => {
+          // if there's product tags, we need to create pairings to bulk create in the ProductTag model
+          if (req.body.tagIds.length) {
+              const productTagIdArr = req.body.tagIds.map((tag_id) => {
+                  return {
+                      product_id: product.id,
+                      tag_id,
+                  };
+              });
+              return ProductTag.bulkCreate(productTagIdArr);
+          }
+          // if no product tags, just respond
+          res.status(200).json(product);
+      })
+      .then((productTagIds) => res.status(200).json(productTagIds))
+      .catch((err) => {
+          console.log(err);
+          res.status(400).json(err);
+      });
 });
+//made it semi-functional reverting back to the original code.  will leave it and try put now. 
 
 // update product
 router.put('/:id', (req, res) => {
@@ -123,6 +161,8 @@ router.put('/:id', (req, res) => {
       res.status(400).json(err);
     });
 });
+
+//simply cannot figure out this put route and what its doing. running out of time due to project2 so moving on. 
 
 //here we can use the destroy method where the params id matches the query. we will continue to use async and try 
 //remember that async always returns a promise. when no return statement is defined, it would return a resolving promise.
