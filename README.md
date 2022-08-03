@@ -30,7 +30,7 @@ This project was a pure back-end endeavor aimed toward creating a a mock databas
 
 ## Bugs
 
-- There are no known bugs afflicting the program at this time.
+- The primary bug afflicting the program at this time is the product-route put route. I could not entirely figure out its approach process and was thus unable to fix it in the time I have- I need to move on to HW for Thursday plus project 2. I have marked this down as a possible resubmission for later once I can get some help from a tutor or TA on how to fix that update route.
 
 ## Screenshots
 

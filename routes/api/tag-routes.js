@@ -49,18 +49,33 @@ router.get('/:id', async (req, res) => {
 
 
 //TODO: not entirely sure how to write this one. Need to read up on post routes involving async and create req bodies
-router.post('/', (req, res) => {
+// router.post('/', (req, res) => {
+//   // create a new tag
+//   Tag.create({
+//     tag_name: req.body.tag_name
+//   })
+//     .then(dbTagData => res.json(dbTagData))
+//     .catch(err => {
+//         console.log(err);
+//         res.status(500).json(err);
+//   });
+// });
+
+
+//perhaps this can be pretty simple. all we need to do is post to tags with a tagCreate + req.body.
+//tags only have an id and a name >>> Insomnia
+router.post('/', async (req, res) => {
   // create a new tag
-  Tag.create({
-    tag_name: req.body.tag_name
-  })
-    .then(dbTagData => res.json(dbTagData))
-    .catch(err => {
-        console.log(err);
-        res.status(500).json(err);
-  });
+  try {
+    const newTag = await Tag.create(req.body);
+    res.status(200).json(newTag);
+  } catch (err) {
+    res.status(400).json(err);
+  }
 });
 
+
+//either finds tag by params id or doesn't. simply respond with new tag data at index 0 doesnt exist if its not found because that should be the tag we're trying to update. 
 router.put('/:id', (req, res) => {
   // update a tag's name by its `id` value
   Tag.update(req.body, {
